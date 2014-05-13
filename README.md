@@ -9,22 +9,25 @@ It interfaces data through numpy arrays instead of Theano objects, which makes i
 
 Contains the following classes:
 
-  RegularAutoencoder  
+    RegularAutoencoder  
   
-  DenoisingAutoencoder
+    DenoisingAutoencoder
   
-  ContractiveAutoencoer
+    ContractiveAutoencoer
   
-  HigherOrderContractiveAutoencoer
+    HigherOrderContractiveAutoencoer
   
-  DeepGeneralAutoencoder
+    DeepGeneralAutoencoder
   
-  MLP (Multilayer Perceptron)
+    MLP (Multilayer Perceptron)
   
   
 Dependencies:
-1- NumPy: http://www.scipy.org/scipylib/download.html
-2- Theano (bleeding-edge version): http://deeplearning.net/software/theano/install.html#bleeding-edge-install-instructions
-3- Pylearn2: http://deeplearning.net/software/pylearn2/
+
+    1- NumPy: http://www.scipy.org/scipylib/download.html
+
+    2- Theano (bleeding-edge version): http://deeplearning.net/software/theano/install.html#bleeding-edge-install-instructions
+
+    3- Pylearn2: http://deeplearning.net/software/pylearn2/
 
 
