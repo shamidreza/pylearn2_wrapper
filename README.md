@@ -1,6 +1,6 @@
 pylearn2_wrapper
 ==============
-Author: Seyed Hamidreza Mohammadi (mohammah@ohsu.edu)
+Author: Seyed Hamidreza Mohammadi (http://www.cslu.ogi.edu/~mohammah/)
 
 Date: 2014-05-13 (http://www.w3.org/TR/NOTE-datetime)
 
