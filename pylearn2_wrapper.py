@@ -211,6 +211,50 @@ class RegularAutoencoder(Autoencoder):
         X_theano = theano.shared(value=X, name='inputs')
 	return self.model.decode(self.model.encode(X_theano)).eval()
     
+class SparseL1Autoencoder(RegularAutoencoder):  
+    def _build_model(self):	 
+	self.model = pylearn2.models.autoencoder.Autoencoder(self.config['input_dimension'],
+	                                                                self.config['layer'],
+	                                                                self.config['act_enc_type'],
+	                                                                self.config['act_dec_type'],
+	                                                                tied_weights=self.config['tied'],
+	                                                                irange=0.05)
+    def _build_algorithm(self, num_samples):
+	self.algorithm = pylearn2.training_algorithms.sgd.SGD(
+	    learning_rate = self.config['learning_rate'],
+	    batch_size = self.config['batch_size'],
+	    batches_per_iter=int(num_samples/self.config['batch_size']),
+	    #cost = pylearn2.costs.cost.SumOfCosts([pylearn2.costs.autoencoder.MeanBinaryCrossEntropy(),
+	                                          #[0.1, pylearn2.costs.cost.MethodCost('contraction_penalty')]]),
+	    cost = pylearn2.costs.cost.SumOfCosts(
+	        [[1.0,pylearn2.costs.autoencoder.MeanSquaredReconstructionError()],
+	        [0.2, pylearn2.costs.autoencoder.SampledMeanSquaredReconstructionError(0.2,0.00001)]]),
+	    #cost = pylearn2.costs.autoencoder.SampledMeanSquaredReconstructionError(0.1,1),
+	    
+	    termination_criterion = pylearn2.termination_criteria.EpochCounter(self.config['iterations'])
+	)  
+class SparseKLAutoencoder(RegularAutoencoder):  
+    def _build_model(self):	 
+	self.model = pylearn2.models.autoencoder.Autoencoder(self.config['input_dimension'],
+	                                                                self.config['layer'],
+	                                                                self.config['act_enc_type'],
+	                                                                self.config['act_dec_type'],
+	                                                                tied_weights=self.config['tied'],
+	                                                                irange=0.05)
+    def _build_algorithm(self, num_samples):
+	self.algorithm = pylearn2.training_algorithms.sgd.SGD(
+	    learning_rate = self.config['learning_rate'],
+	    batch_size = self.config['batch_size'],
+	    batches_per_iter=int(num_samples/self.config['batch_size']),
+	    #cost = pylearn2.costs.cost.SumOfCosts([pylearn2.costs.autoencoder.MeanBinaryCrossEntropy(),
+	                                          #[0.1, pylearn2.costs.cost.MethodCost('contraction_penalty')]]),
+	    cost = pylearn2.costs.cost.SumOfCosts(
+	        [[1.0,pylearn2.costs.autoencoder.MeanSquaredReconstructionError()],
+	        [0.2, pylearn2.costs.autoencoder.SparseActivation(1.0, 0.2)]]),
+	    #cost = pylearn2.costs.autoencoder.SparseActivation(1.0, 0.2),
+	    termination_criterion = pylearn2.termination_criteria.EpochCounter(self.config['iterations'])
+	)  
+
 class ContractiveAutoencoder(RegularAutoencoder):  
     def _build_model(self):	 
 	self.model = pylearn2.models.autoencoder.ContractiveAutoencoder(self.config['input_dimension'],
@@ -432,7 +476,7 @@ def script_test_ae():
     X1t = np.random.multivariate_normal([1,1],[[0.1,0],[0,.1]], 1000)
     X2t = np.random.multivariate_normal([2,2],[[0.1,0],[0,.1]], 1000)
     Xt = np.r_[X1t, X2t] 
-    if 1: # regular AE
+    if 0: # regular AE
 	ae = RegularAutoencoder(100, 'tanh', 'linear', X.shape[1],tied=True)
 	#training error: 0.011292262243
 	#testing error: 0.011583130842
@@ -440,6 +484,11 @@ def script_test_ae():
 	#testing error: 0.00847149293172
 	#training error: 0.00637784829721
 	#testing error: 0.00643461805906	
+    elif 1: # sparse KL AE
+	ae = SparseKLAutoencoder(100, 'sigmoid', 'linear', X.shape[1],tied=True)
+    elif 1: # sparse L1 AE
+	ae = SparseL1Autoencoder(100, 'sigmoid', 'linear', X.shape[1],tied=True) 
+	
     elif 0: # denoising AE
 	ae = DenoisingAutoencoder(2, 'tanh', 'linear', X.shape[1], Corruptor('Gaussian', 0.02))
 	#training error: 0.0156150852744
