@@ -30,4 +30,6 @@ Dependencies:
 
     3- Pylearn2: http://deeplearning.net/software/pylearn2/
 
+Cite:
 
+S.H. Mohammadi, A. Kain, Voice Conversion Using Deep Neural Networks With Speaker-Independent Pre-Training, 2014 IEEE Spoken Language Technology Workshop (SLT), 2014.
